@@ -44,7 +44,8 @@ const webpackConfig = {
       minify: {
         collapseWhitespace: true
       }
-    })
+    }),
+    new webpack.ProvidePlugin(config.compiler_globals)
   ],
   resolve: {
     root: paths.base(config.dir_client),
@@ -63,23 +64,13 @@ const webpackConfig = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         loader: 'babel',
+
+        // NOTE: live development transforms (HMR, redbox-react) are
+        // configured in ~/build/webpack-environments/development.js
         query: {
           cacheDirectory: true,
-          plugins: ['transform-runtime', 'add-module-exports'],
-          presets: ['es2015', 'react', 'stage-0'],
-          env: {
-            development: {
-              plugins: [
-                ['react-transform', {
-                  // omit HMR plugin by default and _only_ load in hot mode
-                  transforms: [{
-                    transform: 'react-transform-catch-errors',
-                    imports: ['react', 'redbox-react']
-                  }]
-                }]
-              ]
-            }
-          }
+          plugins: ['transform-runtime'],
+          presets: ['es2015', 'react', 'stage-0']
         }
       },
       {
@@ -124,6 +115,7 @@ const webpackConfig = {
         remove: true,
         browsers: ['last 2 versions']
       },
+      safe: true,
       discardComments: {
         removeAll: true
       }
